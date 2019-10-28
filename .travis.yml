@@ -5,6 +5,10 @@ cache:
   directories:
     - $HOME/.cache/pip
     - $HOME/.ccache  # https://github.com/travis-ci/travis-ci/issues/5853
+env:
+  global:
+     # Doctr deploy key for vstadnytskyi/sequence-server-wrapper
+     - secure: "aHwhDm55q8BIPuhm0HtLm12q0k/7sRSM5M0/UK5HEIhrFZaw6zcP8DBujTRGn4YjU9gcnrEHLc0eWRdtRxEtrvR6kXoApdWH3jKjux1AOGZhSYmvD79ww+fuCNhb4XP8pRIet+DwMYXsFvyWqSjBc1hu09M+01jxtCh0ToqqiRa4A+YslNnm03Fkj2SS5ospUg4WAdCTVgEN7fDJaSA36kTOrkZwHZIuEedqv/ZZhAXab9nDzNYfukk3ZiaBcBXRGisHqiyyYPY5XPeHLvlvQq5nwuTgVeNqI93szKwfa6LpRl2DMmrp/ctPTx/MsfohguW3pkxfwsFg5aKvocEiT+Zg+pHZhqukHKlzXhIhS7JI8YD7KpQPG2O5ndfovjLEtccofiDDQgNVmav9TpwDEL9vz5vkw6mBETegAtV48AQ+VE8Zcps5dId4L/EaE7zAHgUz1geirSbv6A08qLueUWISEduqMwSqooHwQg/gfMy3Ijkn7nih3ztQCsIqM2dFjT/GfbTOI8JtDQO5OPTuJqDZT12yJYSwHpYo/sqktp9SUbYpcvv+DcSgO9ThgMFKFoJV/+tt2/Y6B0l9B7PW4u4uj8g6k8ve2JYic8JbN5QT4GmsqGSuBvDmyYfQ1GOE6i0vjcEyPVkv7vrXzq5FSIIylPy7qh+0+o7GZmBHLOE="
 
 install:
   # Install this package and the packages listed in requirements.txt.
@@ -16,5 +20,8 @@ script:
   - coverage run -m pytest  # Run the tests and check for test coverage.
   - coverage report -m  # Generate test coverage report.
   - codecov  # Upload the report to codecov.
-  - flake8  # Enforce code style ('relaxed' line length limit is set in .flake8 config file).
+  #- flake8  # Enforce code style ('relaxed' line length limit is set in .flake8 config file).
+  - set -e  # If any of the following steps fail, just stop at that point.
   - make -C docs html  # Build the documentation.
+  - pip install doctr
+  - doctr deploy --built-docs docs/build/html .  # Publish the documentation.
