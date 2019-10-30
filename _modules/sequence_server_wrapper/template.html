@@ -1,0 +1,353 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>sequence_server_wrapper.template &mdash; Sequence Server Wrapper 0.0.0.post5+g080ca01 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+        <script type="text/javascript" src="../../_static/copybutton.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Sequence Server Wrapper
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.0.post5+g080ca01
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../release-history.html">Release History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../min_versions.html">Minimum Version of Python and NumPy</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Sequence Server Wrapper</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>sequence_server_wrapper.template</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for sequence_server_wrapper.template</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Authors: Valentyn Stadnytskyi</span>
+<span class="sd">Date created: 23 Oct 2019</span>
+<span class="sd">Date last modified: 25 Oct 2019</span>
+<span class="sd">Python Version: 3</span>
+
+<span class="sd">Description:</span>
+<span class="sd">------------</span>
+<span class="sd">The Template Server hosts three PVs: CMD(command PV), ACK(acknowledgement PV) and values PV.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">logging</span> <span class="k">import</span> <span class="n">debug</span><span class="p">,</span><span class="n">info</span><span class="p">,</span><span class="n">warning</span><span class="p">,</span><span class="n">error</span>
+<span class="c1">#Input/Output server library</span>
+<span class="kn">from</span> <span class="nn">caproto.server</span> <span class="k">import</span> <span class="n">pvproperty</span><span class="p">,</span> <span class="n">PVGroup</span><span class="p">,</span> <span class="n">SubGroup</span><span class="p">,</span> <span class="n">ioc_arg_parser</span><span class="p">,</span> <span class="n">run</span>
+<span class="c1">#from ubcs_auxiliary.threading import new_thread</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">nan</span>
+
+<div class="viewcode-block" id="Server"><a class="viewcode-back" href="../../overview.html#sequence_server_wrapper.template.Server">[docs]</a><span class="k">class</span> <span class="nc">Server</span><span class="p">(</span><span class="n">PVGroup</span><span class="p">):</span>
+    <span class="c1">#placeholder for the self.system attribute</span>
+    <span class="n">system</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># define relavant PVs.</span>
+    <span class="n">CMD</span> <span class="o">=</span> <span class="n">pvproperty</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="s1">&#39;This is command string&#39;</span><span class="p">,</span> <span class="n">max_length</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="nb">str</span><span class="p">)</span>
+    <span class="n">ACK</span> <span class="o">=</span> <span class="n">pvproperty</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">read_only</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="n">pvproperty</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="n">read_only</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="nb">str</span><span class="p">)</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="n">pvproperty</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="p">[</span><span class="n">nan</span><span class="p">,</span><span class="n">nan</span><span class="p">],</span> <span class="n">read_only</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">)</span>
+
+
+    <span class="nd">@CMD</span><span class="o">.</span><span class="n">startup</span> <span class="c1">#this fubction will be executed on instantiaton</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">CMD</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">async_lib</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;* request method called at server startup @CMD.startup&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">io_put_queue</span> <span class="o">=</span> <span class="n">async_lib</span><span class="o">.</span><span class="n">ThreadsafeQueue</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">io_put_queue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">io_put_queue</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;@CMD.startup the self.system is </span><span class="si">{self.system}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">io_put_queue</span><span class="o">.</span><span class="n">async_get</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Got put request from the system group: </span><span class="si">{value}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s1">&#39;CMD&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">CMD</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="s1">&#39;CMD&#39;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="s1">&#39;ACK&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">ACK</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="s1">&#39;ACK&#39;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="s1">&#39;values&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="s1">&#39;message&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="s1">&#39;message&#39;</span><span class="p">])</span>
+
+    <span class="nd">@CMD</span><span class="o">.</span><span class="n">putter</span>  <span class="c1">#A Putter for the PV with name CMD</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">CMD</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;CMD putter received update for the </span><span class="si">{}</span><span class="s1">, sending new value </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;CMD&#39;</span><span class="p">,</span><span class="n">value</span><span class="p">))</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">system_io_execute</span><span class="p">(</span><span class="n">pv_name</span> <span class="o">=</span> <span class="s1">&#39;CMD&#39;</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span>
+
+<div class="viewcode-block" id="Server.system_io_execute"><a class="viewcode-back" href="../../overview.html#sequence_server_wrapper.template.Server.system_io_execute">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">system_io_execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        wrapper used to submit commands to the system code for execution</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        pv_name:  (string)</span>
+<span class="sd">            string name of the PV</span>
+<span class="sd">        value:</span>
+<span class="sd">            new value for the PV specified in the pv_name field</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; self.system_io_execute(pv_name = &#39;CMD&#39;, value = &#39;[0]&#39;)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">ubcs_auxiliary.threading</span> <span class="k">import</span> <span class="n">new_thread</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;@system_io_execute: The </span><span class="si">{}</span><span class="s2"> putter was called with value </span><span class="si">{}</span><span class="s2">. The system connected is </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pv_name</span><span class="p">,</span><span class="n">value</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">new_thread</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">io_execute</span><span class="p">,</span><span class="n">pv_name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div></div>
+
+<span class="k">class</span> <span class="nc">ThreadingClient</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">period_pv_name</span> <span class="o">=</span> <span class="s1">&#39;MOCK:period&#39;</span>
+    <span class="n">start_pv_name</span> <span class="o">=</span> <span class="s1">&#39;MOCK:start&#39;</span>
+    <span class="n">status_pv_name</span> <span class="o">=</span> <span class="s1">&#39;MOCK:status&#39;</span>
+    <span class="n">Nested_Indices</span> <span class="o">=</span> <span class="s1">&#39;MOCK:Nested_Indices&#39;</span>
+    <span class="n">system</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pvs</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">caproto.threading.client</span> <span class="k">import</span> <span class="n">Context</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="n">Context</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pvs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sub</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">token</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">pv</span> <span class="ow">in</span> <span class="n">pvs</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;subscribing to </span><span class="si">{pv}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pvs</span><span class="p">[</span><span class="n">pv</span><span class="p">],</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get_pvs</span><span class="p">(</span><span class="n">pv</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sub</span><span class="p">[</span><span class="n">pv</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pvs</span><span class="p">[</span><span class="n">pv</span><span class="p">]</span><span class="o">.</span><span class="n">subscribe</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">[</span><span class="s1">&#39;MOCK:Nested_Indices&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sub</span><span class="p">[</span><span class="s1">&#39;MOCK:Nested_Indices&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">add_callback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">monitor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">response</span><span class="p">):</span>
+        <span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;----------Threading Client monitor---------&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;system monitor received </span><span class="si">{response}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;response data </span><span class="si">{response.data}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;self.system = </span><span class="si">{self.system}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;if statement&#39;</span><span class="p">)</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">data</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;response data {bytes(response.data)}&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">io_execute</span><span class="p">(</span><span class="s1">&#39;Nested_Indices&#39;</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
+            <span class="n">new_thread</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">io_execute</span><span class="p">,</span><span class="s1">&#39;Nested_Indices&#39;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_period</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+<span class="k">class</span> <span class="nc">SyncClient</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">period_pv_name</span> <span class="o">=</span> <span class="s1">&#39;MOCK:period&#39;</span>
+    <span class="n">start_pv_name</span> <span class="o">=</span> <span class="s1">&#39;MOCK:start&#39;</span>
+    <span class="n">status_pv_name</span> <span class="o">=</span> <span class="s1">&#39;MOCK:status&#39;</span>
+
+    <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;init SyncClient&#39;</span><span class="p">)</span>
+        <span class="kn">from</span> <span class="nn">caproto.sync.client</span> <span class="k">import</span> <span class="n">subscribe</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sub</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">token</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sub</span><span class="p">[</span><span class="s1">&#39;period_pv&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">subscribe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">period_pv_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sub</span><span class="p">[</span><span class="s1">&#39;start_pv&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">subscribe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start_pv_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sub</span><span class="p">[</span><span class="s1">&#39;status_pv&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">subscribe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">status_pv_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">[</span><span class="s1">&#39;period_pv&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sub</span><span class="p">[</span><span class="s1">&#39;period_pv&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">add_callback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">[</span><span class="s1">&#39;start_pv&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sub</span><span class="p">[</span><span class="s1">&#39;start_pv&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">add_callback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">[</span><span class="s1">&#39;status_pv&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sub</span><span class="p">[</span><span class="s1">&#39;period_pv&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">add_callback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sub</span><span class="p">[</span><span class="s1">&#39;period_pv&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">block</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sub</span><span class="p">[</span><span class="s1">&#39;start_pv&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">block</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sub</span><span class="p">[</span><span class="s1">&#39;status_pv&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">block</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">ubcs_auxiliary.threading</span> <span class="k">import</span> <span class="n">new_thread</span>
+        <span class="n">new_thread</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">init</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">monitor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">response</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_period</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="c1"># The Record Name is specified by prefix</span>
+    <span class="n">prefix</span> <span class="o">=</span> <span class="s1">&#39;TEST:SERVER.&#39;</span>
+    <span class="kn">from</span> <span class="nn">pdb</span> <span class="k">import</span> <span class="n">pm</span>
+    <span class="kn">from</span> <span class="nn">tempfile</span> <span class="k">import</span> <span class="n">gettempdir</span>
+    <span class="kn">import</span> <span class="nn">logging</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">gettempdir</span><span class="p">()</span><span class="o">+</span><span class="s1">&#39;/</span><span class="si">{}</span><span class="s1">.log&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">))</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">gettempdir</span><span class="p">()</span><span class="o">+</span><span class="s1">&#39;/</span><span class="si">{}</span><span class="s1">.log&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">),</span>
+                        <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2"> </span><span class="si">%(levelname)s</span><span class="s2">: </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">server</span> <span class="o">=</span> <span class="n">Server</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Valentyn Stadnytskyi
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
