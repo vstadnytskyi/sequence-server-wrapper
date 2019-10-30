@@ -3,8 +3,14 @@ from sequence_server_wrapper.template import Server, ThreadingClient
 from sequence_server_wrapper.examples.example_device import DeviceExample
 
 from caproto.server import pvproperty, PVGroup, SubGroup, ioc_arg_parser, run
-from caproto import config_caproto_logging
-config_caproto_logging()
+
+import traceback
+
+try:
+    from caproto import config_caproto_logging
+    config_caproto_logging()
+except:
+    print(traceback.format_exc())
 
 from logging import debug, info, warning, error
 
