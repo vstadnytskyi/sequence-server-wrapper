@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from sequence_server_wrapper.template_server import Server, ThreadingClient
+from sequence_server_wrapper.template import Server, ThreadingClient
 from example_device import DeviceExample
 
 from caproto.server import pvproperty, PVGroup, SubGroup, ioc_arg_parser, run
@@ -83,15 +83,15 @@ class ServerExample(PVGroup):
         if self.system is not None:
             new_thread(self.system.io_execute,pv_name, value)
 
-
-if __name__ == '__main__':
+def start(server_prefix, client_pvs):
+    from sequence_server_wrapper.template import Server
+    from sequence_server_wrapper.template import ThreadingClient
     ioc_options, run_options = ioc_arg_parser(
-        default_prefix='TEST:SERVER.',
+        default_prefix=server_prefix,
         desc='description')
 
     io_server  = ServerExample(**ioc_options)
-    pvs = ['MOCK:period','MOCK:start','MOCK:status','MOCK:Nested_Indices']
-    io_client = ThreadingClient(pvs)
+
     print(f'io device is {io_server.device}')
 
     # instantiate of the Device object and initializes it.
@@ -101,7 +101,16 @@ if __name__ == '__main__':
     # Esteblish crosslinks between device and io (server)
     system.io = io_server
     io_server.seq.system = io_server.system = system
+
+    pvs = client_pvs
+    io_client = ThreadingClient(pvs)
     io_client.system = system
 
     #start async caproto server IO
     run(io_server.pvdb, **run_options)
+
+
+if __name__ == '__main__':
+    client_pvs = ['MOCK:period','MOCK:start','MOCK:status','MOCK:Nested_Indices']
+    server_prefix = 'TEST:SERVER.'
+    start(server_prefix = 'TEST:SERVER.', client_pvs = client_pvs)

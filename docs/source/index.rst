@@ -10,6 +10,7 @@ Sequence Server Wrapper Documentation
    :maxdepth: 2
 
    installation
+   overview
    usage
    release-history
    min_versions

@@ -7,6 +7,8 @@ import traceback
 class DeviceExample():
     def __init__(self):
         self.io = None
+        self.trajectory = None
+        self.idle_value = 0.0
 
     def init(self):
         from time import sleep
@@ -61,7 +63,10 @@ class DeviceExample():
             index = eval(bytes(value))['test.server']
             self.io_put(pv_name = 'ACK',value = 0)
             try:
-                self.VAL = self.trajectory[index]
+                if self.trajectory is not None:
+                    self.VAL = self.trajectory[index]
+                else:
+                    self.VAL = self.idle_value
                 flag = True
                 resp = ' '
             except:

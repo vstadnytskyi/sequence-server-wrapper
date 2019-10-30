@@ -2,8 +2,8 @@
 Usage
 =====
 
-Start by importing Sequence Server Wrapper.
+
 
 .. code-block:: python
 
-    import sequence_server_wrapper
+    from sequence_server_wrapper.template_server import Server
