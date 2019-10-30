@@ -56,7 +56,7 @@ The putter function for CMD PV will submit the new value of the PV to the system
 
 where self.system_io_execute act as a wrapper and used to submit commands to the system code for execution.
 
-.. autoclass:: sequence_server_wrapper.template_server.Server
+.. autoclass:: sequence_server_wrapper.template.Server
   :members:
 
 Start by importing Sequence Server Wrapper.
